@@ -120,6 +120,16 @@ body {
 .pending-dot {
   width: 7px; height: 7px; border-radius: 50%; background: var(--orange); flex-shrink: 0;
 }
+.sidebar-csv-row {
+  display: flex; gap: 6px; margin-top: 8px;
+}
+.sidebar-csv-btn {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border); color: var(--text2);
+  border-radius: var(--radius-sm); padding: 5px 6px; font-size: 11px;
+  cursor: pointer; transition: var(--transition); text-align: center; white-space: nowrap;
+}
+.sidebar-csv-btn:hover { background: var(--bg4); color: var(--text); }
+.sidebar.collapsed .sidebar-csv-row { display: none; }
 
 /* ══════════════════════════════════════
    MAIN LAYOUT
@@ -616,16 +626,6 @@ body {
 .habit-today-cell  { box-shadow: 0 0 0 2px var(--accent2); }
 .streak-val        { font-size: 12px; color: var(--orange); font-weight: 700; }
 
-/* ══════════════════════════════════════
-   CSV IMPORT BUTTONS
-══════════════════════════════════════ */
-.btn-icon-csv {
-  width: auto !important; border-radius: var(--radius-sm) !important;
-  padding: 0 9px !important; font-size: 10px !important; font-weight: 700;
-  background: var(--bg3) !important; border: 1px solid var(--border) !important;
-  color: var(--text2) !important;
-}
-.btn-icon-csv:hover { background: var(--bg4) !important; color: var(--text) !important; }
 
 /* ══════════════════════════════════════
    AUTO-PROGRESS indicator on Goals
@@ -652,5 +652,4 @@ body {
   .cal-cell { min-height: 56px; }
   .habit-row { grid-template-columns: 1fr repeat(7, 28px) 48px 42px; gap: 2px; }
   .habit-cell { width: 26px; height: 26px; }
-  .btn-icon-csv { font-size: 9px !important; padding: 0 5px !important; }
 }

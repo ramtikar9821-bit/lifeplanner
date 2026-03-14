@@ -56,6 +56,11 @@
         <span id="pendingTotal">0</span>
         <span>pending</span>
       </div>
+      <div class="sidebar-csv-row">
+        <button class="sidebar-csv-btn" id="csvTemplateBtn" title="Download CSV template">↓ CSV Template</button>
+        <button class="sidebar-csv-btn" id="csvImportBtn" title="Import tasks from CSV">↑ Import CSV</button>
+        <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+      </div>
     </div>
   </aside>
 
@@ -68,9 +73,6 @@
       </div>
       <div class="topbar-right">
         <span class="topbar-date" id="topbarDate"></span>
-        <button class="btn-icon btn-icon-csv" id="csvTemplateBtn" title="Download CSV template">CSV↓</button>
-        <button class="btn-icon btn-icon-csv" id="csvImportBtn" title="Import tasks from CSV">CSV↑</button>
-        <input type="file" id="csvFileInput" accept=".csv" style="display:none">
         <button class="btn-icon" id="quickAddBtn" title="Quick add task">+</button>
       </div>
     </header>
