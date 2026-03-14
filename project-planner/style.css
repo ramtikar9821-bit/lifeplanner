@@ -590,10 +590,11 @@ body {
 /* ══════════════════════════════════════
    WEEKLY HABITS GRID (Dashboard)
 ══════════════════════════════════════ */
-.habit-grid { display: flex; flex-direction: column; }
+#dashHabitGrid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.habit-grid { display: flex; flex-direction: column; min-width: 520px; }
 .habit-row {
   display: grid;
-  grid-template-columns: 1fr repeat(7, 34px) 58px 52px;
+  grid-template-columns: 140px repeat(7, 34px) 58px 52px;
   align-items: center; gap: 3px; padding: 5px 0;
   border-bottom: 1px solid var(--border);
 }
@@ -607,6 +608,7 @@ body {
 .habit-day-date { font-size: 11px; margin-top: 1px; }
 .habit-name-col {
   font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 8px;
+  min-width: 0;
 }
 .habit-stat-col { font-size: 11px; color: var(--text2); text-align: center; font-weight: 500; }
 .habit-stat-label { font-size: 10px; color: var(--text3); text-align: center; }
@@ -673,6 +675,5 @@ body {
   .page { padding: 14px; }
   .form-row { grid-template-columns: 1fr; }
   .cal-cell { min-height: 56px; }
-  .habit-row { grid-template-columns: 1fr repeat(7, 28px) 48px 42px; gap: 2px; }
   .habit-cell { width: 26px; height: 26px; }
 }
