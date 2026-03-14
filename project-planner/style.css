@@ -652,5 +652,5 @@ body {
   .cal-cell { min-height: 56px; }
   .habit-row { grid-template-columns: 1fr repeat(7, 28px) 48px 42px; gap: 2px; }
   .habit-cell { width: 26px; height: 26px; }
-  .btn-icon-csv { display: none; }
+  .btn-icon-csv { font-size: 9px !important; padding: 0 5px !important; }
 }
