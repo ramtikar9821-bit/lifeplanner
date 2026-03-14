@@ -1,6 +1,6 @@
 {
-  "name": "LifePlanner",
-  "short_name": "LifePlanner",
+  "name": "Planner",
+  "short_name": "Planner",
   "description": "Your personal life & project planner",
   "start_url": "/index.html",
   "display": "standalone",
