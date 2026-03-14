@@ -71,7 +71,7 @@ function pruneOldData() {
 // ── Navigation ────────────────────────────────────────────────
 const PAGE_TITLES = {
   dashboard: 'Dashboard', work: 'Work',
-  personal:  'Personal',  calendar: 'Calendar', routines: 'Routines'
+  personal:  'Personal',  calendar: 'Calendar', routines: 'Routines', settings: 'Settings'
 };
 let currentPage = 'dashboard';
 let editingId   = null;
@@ -1130,6 +1130,49 @@ document.getElementById('csvImportBtn').addEventListener('click', () => {
 });
 document.getElementById('csvFileInput').addEventListener('change', e => {
   if (e.target.files[0]) { importCsvFile(e.target.files[0]); e.target.value = ''; }
+});
+
+// ══════════════════════════════════════════════════════════════
+//  SETTINGS PAGE
+// ══════════════════════════════════════════════════════════════
+document.getElementById('exportJsonBtn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `planner-backup-${today()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('importJsonBtn').addEventListener('click', () => {
+  document.getElementById('jsonFileInput').click();
+});
+
+document.getElementById('jsonFileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (!imported.tasks || !imported.projects) { alert('Invalid backup file.'); return; }
+      if (!confirm('This will replace ALL current data. Continue?')) return;
+      state = { ...state, ...imported };
+      save(); rerenderCurrent(); updateBadges();
+      alert('✓ Data restored successfully.');
+    } catch { alert('Could not read the file. Make sure it is a valid Planner backup.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('clearDataBtn').addEventListener('click', () => {
+  if (!confirm('Delete ALL tasks, projects, goals and routines? This cannot be undone.')) return;
+  state.tasks = []; state.projects = []; state.goals = [];
+  state.routineLog = {}; state.taskHistory = {};
+  save(); rerenderCurrent(); updateBadges();
+  alert('✓ All data cleared.');
 });
 
 // ══════════════════════════════════════════════════════════════

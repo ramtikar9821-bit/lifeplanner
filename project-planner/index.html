@@ -56,11 +56,9 @@
         <span id="pendingTotal">0</span>
         <span>pending</span>
       </div>
-      <div class="sidebar-csv-row">
-        <button class="sidebar-csv-btn" id="csvTemplateBtn" title="Download CSV template">↓ CSV Template</button>
-        <button class="sidebar-csv-btn" id="csvImportBtn" title="Import tasks from CSV">↑ Import CSV</button>
-        <input type="file" id="csvFileInput" accept=".csv" style="display:none">
-      </div>
+      <a class="nav-item settings-nav-item" data-page="settings">
+        <span class="nav-icon">⚙</span><span class="nav-label">Settings</span>
+      </a>
     </div>
   </aside>
 
@@ -270,6 +268,42 @@
         <button class="btn-primary" id="addRoutineBtn">+ New Routine</button>
       </div>
       <div class="routines-sections" id="routinesSections"></div>
+    </div>
+
+    <!-- ══════════ SETTINGS ══════════ -->
+    <div class="page" id="page-settings">
+      <div class="settings-wrap">
+
+        <div class="settings-section">
+          <div class="settings-section-title">Data Backup</div>
+          <div class="settings-section-desc">Export your data as a JSON file to back it up or transfer it to another device.</div>
+          <button class="btn-primary" id="exportJsonBtn">↓ Export Data</button>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-title">Restore Data</div>
+          <div class="settings-section-desc">Import a previously exported JSON file. This will replace all current data.</div>
+          <button class="btn-primary" id="importJsonBtn">↑ Import Data</button>
+          <input type="file" id="jsonFileInput" accept=".json" style="display:none">
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-title">Bulk Task Upload</div>
+          <div class="settings-section-desc">Import multiple tasks at once from a CSV file. Download the template first to see the correct format.</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn-primary" id="csvTemplateBtn">↓ Download CSV Template</button>
+            <button class="btn-ghost" id="csvImportBtn">↑ Import CSV</button>
+            <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+          </div>
+        </div>
+
+        <div class="settings-section settings-section-danger">
+          <div class="settings-section-title">Clear All Data</div>
+          <div class="settings-section-desc">Permanently delete all tasks, projects, goals, and routines. This cannot be undone.</div>
+          <button class="btn-danger" id="clearDataBtn">✕ Clear All Data</button>
+        </div>
+
+      </div>
     </div>
 
   </main>
