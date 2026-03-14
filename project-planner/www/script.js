@@ -98,6 +98,7 @@ function showPage(name) {
   if (name === 'personal')  renderPersonal();
   if (name === 'calendar')  renderCalendar();
   if (name === 'routines')  renderRoutines();
+  if (name === 'settings')  updateNotifUI();
   updateBadges();
 }
 
@@ -1220,14 +1221,32 @@ function scheduleReminders() {
     });
 }
 
-function requestNotificationPermission() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'default') {
-    Notification.requestPermission().then(scheduleReminders);
-  } else {
-    scheduleReminders();
+function updateNotifUI() {
+  const badge = document.getElementById('notifStatusBadge');
+  const desc  = document.getElementById('notifStatusDesc');
+  const btn   = document.getElementById('enableNotifBtn');
+  if (!('Notification' in window)) {
+    desc.textContent  = 'Notifications are not supported on this browser.';
+    btn.disabled = true; return;
   }
+  const p = Notification.permission;
+  badge.textContent  = p === 'granted' ? '✓ Enabled' : p === 'denied' ? '✕ Blocked' : '○ Not set';
+  badge.className    = `notif-status-badge notif-${p}`;
+  desc.textContent   = p === 'granted'
+    ? 'Notifications are enabled. Reminders will fire at the set times while the app is open.'
+    : p === 'denied'
+    ? 'Notifications are blocked. Please allow them in your browser/phone settings, then reload.'
+    : 'Tap the button below to allow reminder notifications for your routines.';
+  btn.style.display  = p === 'granted' ? 'none' : '';
 }
+
+document.getElementById('enableNotifBtn').addEventListener('click', () => {
+  if (!('Notification' in window)) return;
+  Notification.requestPermission().then(perm => {
+    if (perm === 'granted') scheduleReminders();
+    updateNotifUI();
+  });
+});
 
 // ══════════════════════════════════════════════════════════════
 //  BADGES & TOTALS
@@ -1248,4 +1267,5 @@ function rerenderCurrent() { showPage(currentPage); }
 // ── Init ──────────────────────────────────────────────────────
 showPage('dashboard');
 updateBadges();
-requestNotificationPermission();
+// Schedule reminders if already granted (no prompt on load)
+if (typeof Notification !== 'undefined' && Notification.permission === 'granted') scheduleReminders();

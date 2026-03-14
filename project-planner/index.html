@@ -275,6 +275,18 @@
       <div class="settings-wrap">
 
         <div class="settings-section">
+          <div class="settings-section-title">Notifications</div>
+          <div class="settings-section-desc" id="notifStatusDesc">Check status below.</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button class="btn-primary" id="enableNotifBtn">🔔 Enable Notifications</button>
+            <span class="notif-status-badge" id="notifStatusBadge"></span>
+          </div>
+          <div class="settings-section-desc" style="margin-top:6px;font-size:11px">
+            <strong>iPhone users:</strong> Open this site in Safari → tap Share → <em>Add to Home Screen</em> → open from the Home Screen icon → then tap Enable above.
+          </div>
+        </div>
+
+        <div class="settings-section">
           <div class="settings-section-title">Data Backup</div>
           <div class="settings-section-desc">Export your data as a JSON file to back it up or transfer it to another device.</div>
           <button class="btn-primary" id="exportJsonBtn">↓ Export Data</button>

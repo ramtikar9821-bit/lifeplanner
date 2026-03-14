@@ -656,6 +656,10 @@ body {
 }
 .btn-danger:hover { background: rgba(239,68,68,0.22); }
 .settings-nav-item { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
+.notif-status-badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 10px; }
+.notif-granted { background: rgba(16,185,129,0.15); color: var(--green); }
+.notif-denied  { background: rgba(239,68,68,0.15);  color: var(--red); }
+.notif-default { background: rgba(245,158,11,0.15); color: var(--orange); }
 
 /* ══════════════════════════════════════
    AUTO-PROGRESS indicator on Goals
