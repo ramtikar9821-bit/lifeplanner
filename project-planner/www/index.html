@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#191919">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>LifePlanner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── SIDEBAR ─────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">LifePlanner</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle">‹</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">OVERVIEW</div>
+      <a class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">⊞</span><span class="nav-label">Dashboard</span>
+      </a>
+
+      <div class="nav-section-label">CATEGORIES</div>
+      <a class="nav-item" data-page="work">
+        <span class="nav-icon work-icon">◫</span>
+        <span class="nav-label">Work</span>
+        <span class="nav-badge work-badge" id="workBadge"></span>
+      </a>
+      <a class="nav-item" data-page="personal">
+        <span class="nav-icon personal-icon">◎</span>
+        <span class="nav-label">Personal</span>
+        <span class="nav-badge personal-badge" id="personalBadge"></span>
+      </a>
+
+      <div class="nav-section-label">PLANNING</div>
+      <a class="nav-item" data-page="calendar">
+        <span class="nav-icon">▦</span><span class="nav-label">Calendar</span>
+      </a>
+      <a class="nav-item" data-page="routines">
+        <span class="nav-icon">↺</span><span class="nav-label">Routines</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="pending-pill" id="pendingPill">
+        <span class="pending-dot"></span>
+        <span id="pendingTotal">0</span>
+        <span>pending</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ───────────────────────────────────── -->
+  <main class="main" id="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-date" id="topbarDate"></span>
+        <button class="btn-icon btn-icon-csv" id="csvTemplateBtn" title="Download CSV template">CSV↓</button>
+        <button class="btn-icon btn-icon-csv" id="csvImportBtn" title="Import tasks from CSV">CSV↑</button>
+        <input type="file" id="csvFileInput" accept=".csv" style="display:none">
+        <button class="btn-icon" id="quickAddBtn" title="Quick add task">+</button>
+      </div>
+    </header>
+
+    <!-- ══════════ DASHBOARD ══════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="dashboard-split">
+
+        <!-- Work column -->
+        <div class="dash-column">
+          <div class="dash-column-header">
+            <span class="dash-column-label work-label">◫ WORK</span>
+            <button class="btn-sm" id="quickAddWorkBtn">+ Task</button>
+          </div>
+          <div class="dash-stat-row">
+            <div class="mini-stat" id="w-stat-pending">
+              <div class="mini-stat-val" id="work-pending-count">0</div>
+              <div class="mini-stat-label">Pending</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-val" id="work-inprog-count">0</div>
+              <div class="mini-stat-label">In Progress</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-val" id="work-done-count">0</div>
+              <div class="mini-stat-label">Done</div>
+            </div>
+          </div>
+          <div class="card pending-card">
+            <div class="card-header">
+              <span class="card-title">⚠ Pending</span>
+              <a class="card-link" data-page="work">View all →</a>
+            </div>
+            <div id="dash-work-pending" class="dash-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Projects</span>
+              <a class="card-link" data-page="work">View all →</a>
+            </div>
+            <div id="dash-work-projects" class="dash-list"></div>
+          </div>
+        </div>
+
+        <!-- Personal column -->
+        <div class="dash-column">
+          <div class="dash-column-header">
+            <span class="dash-column-label personal-label">◎ PERSONAL</span>
+            <button class="btn-sm" id="quickAddPersonalBtn">+ Task</button>
+          </div>
+          <div class="dash-stat-row">
+            <div class="mini-stat" id="p-stat-pending">
+              <div class="mini-stat-val" id="personal-pending-count">0</div>
+              <div class="mini-stat-label">Pending</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-val" id="personal-inprog-count">0</div>
+              <div class="mini-stat-label">In Progress</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-val" id="personal-done-count">0</div>
+              <div class="mini-stat-label">Done</div>
+            </div>
+          </div>
+          <div class="card pending-card personal-pending-card">
+            <div class="card-header">
+              <span class="card-title">⚠ Pending</span>
+              <a class="card-link" data-page="personal">View all →</a>
+            </div>
+            <div id="dash-personal-pending" class="dash-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Goals</span>
+              <a class="card-link" data-page="personal">View all →</a>
+            </div>
+            <div id="dash-personal-goals" class="dash-list"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Upcoming Tasks (next 7 days) -->
+      <div class="card upcoming-card">
+        <div class="card-header">
+          <span class="card-title">Upcoming — Next 7 Days</span>
+          <span class="upcoming-count-badge" id="upcomingCount"></span>
+        </div>
+        <div id="dashUpcoming" class="dash-list"></div>
+      </div>
+
+      <!-- Weekly Habits grid -->
+      <div class="card habit-card">
+        <div class="card-header">
+          <span class="card-title">Weekly Habits</span>
+        </div>
+        <div id="dashHabitGrid"></div>
+      </div>
+
+    </div>
+
+    <!-- ══════════ WORK ══════════ -->
+    <div class="page" id="page-work">
+      <div class="page-toolbar">
+        <div class="tab-group" id="workTabGroup">
+          <button class="tab-btn active" data-tab="work-tasks">Tasks</button>
+          <button class="tab-btn" data-tab="work-projects">Projects</button>
+        </div>
+        <button class="btn-primary" id="addWorkItemBtn">+ New</button>
+      </div>
+
+      <div class="tab-panel active" id="work-tab-tasks">
+        <div class="tasks-toolbar">
+          <div class="filter-tabs" id="workTaskFilter">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="pending">Pending</button>
+            <button class="filter-tab" data-filter="inprogress">In Progress</button>
+            <button class="filter-tab" data-filter="completed">Completed</button>
+          </div>
+          <select class="select-sm" id="workTaskSort">
+            <option value="created">Sort: Created</option>
+            <option value="due">Sort: Due</option>
+            <option value="priority">Sort: Priority</option>
+          </select>
+        </div>
+        <div class="card tasks-card">
+          <div id="workTaskList" class="task-list-full"></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="work-tab-projects">
+        <div class="card" id="workProjectCard"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ PERSONAL ══════════ -->
+    <div class="page" id="page-personal">
+      <div class="page-toolbar">
+        <div class="tab-group" id="personalTabGroup">
+          <button class="tab-btn active" data-tab="personal-tasks">Tasks</button>
+          <button class="tab-btn" data-tab="personal-goals">Goals</button>
+        </div>
+        <button class="btn-primary" id="addPersonalItemBtn">+ New</button>
+      </div>
+
+      <div class="tab-panel active" id="personal-tab-tasks">
+        <div class="tasks-toolbar">
+          <div class="filter-tabs" id="personalTaskFilter">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="pending">Pending</button>
+            <button class="filter-tab" data-filter="inprogress">In Progress</button>
+            <button class="filter-tab" data-filter="completed">Completed</button>
+          </div>
+        </div>
+        <div class="card tasks-card">
+          <div id="personalTaskList" class="task-list-full"></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="personal-tab-goals">
+        <div class="goals-grid" id="personalGoalsGrid"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ CALENDAR ══════════ -->
+    <div class="page" id="page-calendar">
+      <div class="calendar-toolbar">
+        <button class="btn-sm" id="calPrevBtn">‹</button>
+        <span class="calendar-month-label" id="calMonthLabel"></span>
+        <button class="btn-sm" id="calNextBtn">›</button>
+        <div class="cal-legend">
+          <span class="cal-dot cal-dot-work"></span><span>Work</span>
+          <span class="cal-dot cal-dot-personal"></span><span>Personal</span>
+          <span class="cal-dot cal-dot-routine"></span><span>Routine</span>
+        </div>
+      </div>
+      <div class="card calendar-card">
+        <div class="cal-day-headers" id="calDayHeaders"></div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+      <div class="cal-day-detail card" id="calDayDetail">
+        <div class="card-header">
+          <span class="card-title" id="calDayDetailTitle"></span>
+          <button class="btn-sm" id="calDayAddBtn">+ Task</button>
+          <button class="btn-sm" id="calDayDetailClose">✕</button>
+        </div>
+        <div id="calDayDetailList" class="task-list-full"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ ROUTINES ══════════ -->
+    <div class="page" id="page-routines">
+      <div class="page-toolbar">
+        <div class="dow-highlight-row" id="routineDOWRow"></div>
+        <button class="btn-primary" id="addRoutineBtn">+ New Routine</button>
+      </div>
+      <div class="routines-sections" id="routinesSections"></div>
+    </div>
+
+  </main>
+
+  <!-- ══════════════════════════════════════
+       MODALS
+  ══════════════════════════════════════ -->
+  <div class="modal-overlay" id="modalOverlay">
+
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="taskModalTitle">New Task</h2>
+        <button class="modal-close" data-close="taskModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Task Name</label>
+          <input type="text" id="taskName" class="form-input" placeholder="What needs to be done?">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="taskCategory" class="form-input">
+              <option value="work">Work</option>
+              <option value="personal">Personal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="taskType" class="form-input">
+              <option value="once">One-time</option>
+              <option value="routine">Routine</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" id="taskDueField">
+            <label>Due Date</label>
+            <input type="date" id="taskDue" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select id="taskPriority" class="form-input">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group form-field-conditional" id="taskRepeatField">
+          <label>Repeat On</label>
+          <div class="day-picker" id="taskDayPicker">
+            <button class="day-btn" data-day="0">S</button>
+            <button class="day-btn active" data-day="1">M</button>
+            <button class="day-btn active" data-day="2">T</button>
+            <button class="day-btn active" data-day="3">W</button>
+            <button class="day-btn active" data-day="4">T</button>
+            <button class="day-btn active" data-day="5">F</button>
+            <button class="day-btn" data-day="6">S</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Status</label>
+            <select id="taskStatus" class="form-input">
+              <option value="pending" selected>Pending</option>
+              <option value="inprogress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="form-group form-field-conditional" id="taskProjectField">
+            <label>Link to Project</label>
+            <select id="taskProject" class="form-input">
+              <option value="">No project</option>
+            </select>
+          </div>
+          <div class="form-group form-field-conditional" id="taskGoalField">
+            <label>Link to Goal</label>
+            <select id="taskGoal" class="form-input">
+              <option value="">No goal</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="taskNotes" class="form-input" rows="2" placeholder="Add notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" data-close="taskModal">Cancel</button>
+        <button class="btn-primary" id="saveTaskBtn">Save Task</button>
+      </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div class="modal" id="projectModal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="projectModalTitle">New Project</h2>
+        <button class="modal-close" data-close="projectModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Project Name</label>
+          <input type="text" id="projectName" class="form-input" placeholder="Project name">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="projectCategory" class="form-input">
+              <option value="work">Work</option>
+              <option value="personal">Personal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Color</label>
+            <select id="projectColor" class="form-input">
+              <option value="#3b82f6">Blue</option>
+              <option value="#8b5cf6">Purple</option>
+              <option value="#10b981">Green</option>
+              <option value="#f59e0b">Amber</option>
+              <option value="#ef4444">Red</option>
+              <option value="#06b6d4">Cyan</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Status</label>
+            <select id="projectStatus" class="form-input">
+              <option value="active">Active</option>
+              <option value="onhold">On Hold</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="projectDue" class="form-input">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="projectDesc" class="form-input" rows="2" placeholder="Project description..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" data-close="projectModal">Cancel</button>
+        <button class="btn-primary" id="saveProjectBtn">Save Project</button>
+      </div>
+    </div>
+
+    <!-- Goal Modal -->
+    <div class="modal" id="goalModal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="goalModalTitle">New Goal</h2>
+        <button class="modal-close" data-close="goalModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Goal Title</label>
+          <input type="text" id="goalTitle" class="form-input" placeholder="What do you want to achieve?">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Area</label>
+            <select id="goalArea" class="form-input">
+              <option value="health">Health</option>
+              <option value="learning">Learning</option>
+              <option value="finance">Finance</option>
+              <option value="career">Career</option>
+              <option value="personal">Personal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Target Date</label>
+            <input type="date" id="goalDue" class="form-input">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Progress — <span id="goalProgressVal">0%</span></label>
+          <input type="range" min="0" max="100" value="0" id="goalProgress" class="range-input">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="goalDesc" class="form-input" rows="2" placeholder="Describe your goal..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" data-close="goalModal">Cancel</button>
+        <button class="btn-primary" id="saveGoalBtn">Save Goal</button>
+      </div>
+    </div>
+
+  </div><!-- /modal-overlay -->
+
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
