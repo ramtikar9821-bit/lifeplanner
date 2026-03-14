@@ -500,6 +500,11 @@ body {
 }
 .routine-card:hover .routine-del-btn { opacity: 1; }
 .routine-del-btn:hover { color: var(--red); }
+.reminder-tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; color: var(--accent2); font-weight: 500; margin-left: 6px;
+  background: rgba(99,102,241,0.12); border-radius: 8px; padding: 1px 6px;
+}
 
 /* ══════════════════════════════════════
    BUTTONS

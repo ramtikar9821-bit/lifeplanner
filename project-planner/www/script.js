@@ -36,7 +36,7 @@ function load() {
     if (s) state = { ...state, ...JSON.parse(s) };
   } catch(e) { /* ignore */ }
 }
-function save() { pruneOldData(); localStorage.setItem(STATE_KEY, JSON.stringify(state)); }
+function save() { pruneOldData(); localStorage.setItem(STATE_KEY, JSON.stringify(state)); scheduleReminders(); }
 
 load();
 
@@ -149,6 +149,7 @@ overlay.addEventListener('click', e => { if (e.target === overlay) closeModal();
 const taskTypeSelect     = document.getElementById('taskType');
 const taskDueField       = document.getElementById('taskDueField');
 const taskRepeatField    = document.getElementById('taskRepeatField');
+const taskReminderField  = document.getElementById('taskReminderField');
 const taskProjectField   = document.getElementById('taskProjectField');
 const taskGoalField      = document.getElementById('taskGoalField');
 const taskCategorySelect = document.getElementById('taskCategory');
@@ -159,6 +160,7 @@ function applyTaskModalConditions() {
   const isPersonal = !isWork;
   taskDueField.classList.toggle('hidden', isRoutine);
   taskRepeatField.classList.toggle('hidden', !isRoutine);
+  taskReminderField.classList.toggle('hidden', !isRoutine);
   // Work + once → show project link; Personal + once → show goal link; Routines → neither
   taskProjectField.classList.toggle('hidden', !(isWork && !isRoutine));
   taskGoalField.classList.toggle('hidden',    !(isPersonal && !isRoutine));
@@ -211,8 +213,9 @@ function openTaskModal(id = null, defaultCategory = 'work', prefilledDue = null)
 
   buildProjectDropdown();
   buildGoalDropdown();
-  document.getElementById('taskProject').value = t ? (t.projectId || '') : '';
-  document.getElementById('taskGoal').value    = t ? (t.goalId    || '') : '';
+  document.getElementById('taskProject').value     = t ? (t.projectId    || '') : '';
+  document.getElementById('taskGoal').value        = t ? (t.goalId       || '') : '';
+  document.getElementById('taskReminderTime').value = t ? (t.reminderTime || '') : '';
 
   applyTaskModalConditions();
   openModal('taskModal');
@@ -233,11 +236,12 @@ document.getElementById('saveTaskBtn').addEventListener('click', () => {
 
   const data = {
     name, category, type, status: newStatus,
-    priority:   document.getElementById('taskPriority').value,
-    notes:      document.getElementById('taskNotes').value,
-    due:        type === 'once' ? document.getElementById('taskDue').value : null,
-    projectId: category === 'work'     ? document.getElementById('taskProject').value : '',
-    goalId:    category === 'personal' ? document.getElementById('taskGoal').value    : '',
+    priority:     document.getElementById('taskPriority').value,
+    notes:        document.getElementById('taskNotes').value,
+    due:          type === 'once' ? document.getElementById('taskDue').value : null,
+    projectId:    category === 'work'     ? document.getElementById('taskProject').value : '',
+    goalId:       category === 'personal' ? document.getElementById('taskGoal').value    : '',
+    reminderTime: type === 'routine'      ? document.getElementById('taskReminderTime').value : '',
     repeatDays
   };
 
@@ -1028,11 +1032,15 @@ function renderRoutines() {
         return `<div class="${cls}">${lbl}</div>`;
       }).join('');
 
+      const reminderTag = t.reminderTime
+        ? `<span class="reminder-tag">⏰ ${t.reminderTime}</span>`
+        : '';
       card.innerHTML = `
         <div class="routine-card-info">
           <div class="routine-card-name">${t.name}
             <span class="cat-pill cat-pill-${t.category}" style="margin-left:6px">${t.category}</span>
             <span class="status-badge sb-${t.status}" style="margin-left:4px">${t.status}</span>
+            ${reminderTag}
           </div>
           <div class="routine-dow-pips">${pips}</div>
         </div>
@@ -1176,6 +1184,52 @@ document.getElementById('clearDataBtn').addEventListener('click', () => {
 });
 
 // ══════════════════════════════════════════════════════════════
+//  ROUTINE REMINDERS (browser notifications)
+// ══════════════════════════════════════════════════════════════
+const _reminderTimers = [];
+
+function scheduleReminders() {
+  // Clear any previously scheduled timers
+  _reminderTimers.forEach(id => clearTimeout(id));
+  _reminderTimers.length = 0;
+
+  if (Notification.permission === 'denied') return;
+
+  const now    = new Date();
+  const todayDOW = now.getDay();
+
+  state.tasks
+    .filter(t => t.type === 'routine' && t.reminderTime && t.repeatDays.includes(todayDOW))
+    .forEach(t => {
+      const [h, m] = t.reminderTime.split(':').map(Number);
+      const fireAt  = new Date();
+      fireAt.setHours(h, m, 0, 0);
+      const ms = fireAt - now;
+      if (ms <= 0) return; // already passed today
+
+      const id = setTimeout(() => {
+        if (Notification.permission === 'granted') {
+          new Notification('Planner — Routine Reminder', {
+            body: `Time for: ${t.name}`,
+            icon: 'icons/icon-192.png',
+            tag:  t.id, // prevents duplicate notifications
+          });
+        }
+      }, ms);
+      _reminderTimers.push(id);
+    });
+}
+
+function requestNotificationPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    Notification.requestPermission().then(scheduleReminders);
+  } else {
+    scheduleReminders();
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 //  BADGES & TOTALS
 // ══════════════════════════════════════════════════════════════
 function updateBadges() {
@@ -1194,3 +1248,4 @@ function rerenderCurrent() { showPage(currentPage); }
 // ── Init ──────────────────────────────────────────────────────
 showPage('dashboard');
 updateBadges();
+requestNotificationPermission();
